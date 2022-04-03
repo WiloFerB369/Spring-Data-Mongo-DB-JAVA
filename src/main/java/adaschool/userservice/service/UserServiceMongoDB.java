@@ -1,10 +1,14 @@
 package adaschool.userservice.service;
 
+import adaschool.userservice.controller.dto.UserDto;
 import adaschool.userservice.document.User;
 import adaschool.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,44 +21,50 @@ public class UserServiceMongoDB implements UserService {
     }
 
     @Override
-    public User create(User user) {
+    public User create(User user)
+    {
         return userRepository.save( user );
     }
 
-
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+    public Optional<User> findById(String id)
+    {
+        return userRepository.findById(id);
     }
 
     @Override
-    public Optional<User> findById(String id) {
-        return userRepository.findById( id );
+    public User update(UserDto userDto, User user)
+    {
+        user.update(userDto);
+        return userRepository.save(user);
     }
 
     @Override
-    public User updateNameAndLastName(String id, User user) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent())
-        {
-            User userTemp = optionalUser.get();
+    public boolean deleteById(String id)
+    {
+        userRepository.deleteById(id);
+        return true;
+    }
 
-            userTemp.setName(user.getName());
-            userTemp.setLastName(user.getLastName());
-            userTemp.setEmail(user.getEmail());
+    @Override
+    public List<User> all()
+    {
+        return userRepository.findAll();
+    }
 
-            return userRepository.save(userTemp);
-        }
+    @Override
+    public Optional<User> findByEmail(String email)
+    {
+        return Optional.of(userRepository.findByEmail(email));
+    }
+
+    @Override
+    public List<User> findUsersWithNameOrLastNameLike(String queryText) {
         return null;
     }
 
     @Override
-    public boolean deleteById(String id) {
-        if(userRepository.existsById(id))
-        {
-            userRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public List<User> findUsersCreatedAfter(Date startDate) {
+        return null;
     }
 }
